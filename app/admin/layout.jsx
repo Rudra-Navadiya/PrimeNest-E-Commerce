@@ -11,8 +11,8 @@ const navItems = [
   { label: "Orders", href: "/admin/orders", icon: "▤" },
   { label: "Customers", href: "/admin/customers", icon: "♙" },
   { label: "Analytics", href: "/admin/analytics", icon: "▥" },
-  { label: "Statistics", href: "/admin/stats", icon: "◷" },
-  { label: "Settings", href: "/admin/settings", icon: "⚙" },
+  // { label: "Statistics", href: "/admin/stats", icon: "◷" },
+  // { label: "Settings", href: "/admin/settings", icon: "⚙" },
 ];
 
 export default function AdminLayout({ children }) {

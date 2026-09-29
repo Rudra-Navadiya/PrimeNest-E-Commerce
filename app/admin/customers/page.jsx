@@ -105,13 +105,7 @@ export default function AdminCustomersPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => router.push("/admin")}
-            className="w-fit rounded-xl border border-[#ded8cc] bg-white px-5 py-3 text-sm font-medium transition hover:bg-[#f1eee7]"
-          >
-            ← Back to Dashboard
-          </button>
+          
         </header>
 
         {/* Statistics */}

@@ -5364,3 +5364,305 @@ img {
   }
 }
 
+
+
+/* =========================================
+   PRIMENEST - PREMIUM TRANSPARENT NAVBAR
+========================================= */
+
+/* Transparent navbar over hero image */
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 110px;
+  z-index: 1000;
+  box-sizing: border-box;
+
+  /* Transparent gradient */
+  background: linear-gradient(
+    to bottom,
+    rgba(20, 20, 20, 0.28) 0%,
+    rgba(20, 20, 20, 0.10) 100%
+  );
+
+  /* No blur */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  /* Subtle borders */
+  border-top: 3px solid #073e36;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+}
+
+/* =========================================
+   NAVIGATION LINKS
+========================================= */
+
+.nav-links {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 35px;
+}
+
+/* Navigation text */
+.nav-links > a,
+.nav-button {
+  color: #e5e5e5;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.25s ease,
+              border-color 0.25s ease;
+}
+
+/* Navigation buttons */
+.nav-button {
+  height: 100%;
+  padding: 0 5px;
+  border-bottom: 2px solid transparent;
+}
+
+/* Golden yellow hover and active */
+.nav-links > a:hover,
+.nav-button:hover,
+.nav-button.active {
+  color: #FFD700;
+}
+
+.nav-button.active {
+  border-bottom-color: #FFD700;
+}
+
+/* Remove small arrows */
+.nav-chevron {
+  display: none !important;
+}
+
+/* =========================================
+   DROPDOWN POSITIONING
+========================================= */
+
+.nav-item {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* =========================================
+   FULLY TRANSPARENT DROPDOWN
+========================================= */
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 245px;
+  min-width: 245px;
+  box-sizing: border-box;
+  padding: 12px 0;
+
+  /* Transparent background */
+  background: rgba(20, 20, 20, 0.18);
+
+  /* No blur */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+
+  /* Golden yellow accent */
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-top: 2px solid #FFD700;
+  border-radius: 0 0 6px 6px;
+
+  /* Soft shadow */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+
+  /* Vertical submenu layout */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+
+  z-index: 9999;
+
+  /* Smooth entrance */
+  animation: dropdownReveal 0.2s ease-out;
+}
+
+/* =========================================
+   DROPDOWN HEADING
+========================================= */
+
+.dropdown-heading {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 20px;
+
+  /* Golden yellow heading */
+  color: #FFD700;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.20);
+}
+
+/* =========================================
+   DROPDOWN SUBCATEGORIES
+========================================= */
+
+.dropdown-link {
+  display: flex !important;
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: 13px 20px;
+
+  align-items: center;
+  justify-content: space-between;
+
+  /* White submenu text */
+  color: #ffffff !important;
+  background: transparent !important;
+
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+  white-space: nowrap;
+
+  transition: color 0.2s ease,
+              background 0.2s ease,
+              padding 0.2s ease;
+}
+
+/* Golden yellow submenu hover */
+.dropdown-link:hover {
+  color: #FFD700 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  padding-left: 25px;
+}
+
+/* Dropdown arrow, if used */
+.dropdown-arrow {
+  color: #FFD700;
+  transition: color 0.2s ease;
+}
+
+/* =========================================
+   DROPDOWN ANIMATION
+========================================= */
+
+@keyframes dropdownReveal {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* =========================================
+   RESPONSIVE NAVBAR
+========================================= */
+
+@media (max-width: 768px) {
+  .navbar {
+    height: 90px;
+  }
+
+  .nav-links {
+    justify-content: flex-start;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 0 20px;
+  }
+
+  .nav-links > a,
+  .nav-button {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .dropdown {
+    width: 220px;
+    min-width: 220px;
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+.nav-button:focus-visible,
+.dropdown-link:focus-visible {
+  outline: 2px solid #FFD700;
+  outline-offset: 1px;
+}
+
+/*  */
+
+/* Fix navbar spacing and alignment */
+.navbar .nav-links {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 18px !important;
+}
+
+/* Reset extra spacing */
+.navbar .nav-links > a,
+.navbar .nav-links > .nav-item {
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove unwanted active underline */
+.navbar .nav-button,
+.navbar .nav-button.active {
+  border-bottom: none !important;
+  padding: 0 4px !important;
+}
+
+/* Dropdown positioning */
+.navbar .nav-item {
+  position: relative !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+}
+
+/* Dropdown styling */
+.navbar .dropdown {
+  top: 100% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  border-top: 2px solid #FFD700 !important;
+}
+
+/* Golden yellow hover */
+.navbar .nav-button:hover,
+.navbar .nav-button.active,
+.navbar .nav-links > a:hover {
+  color: #FFD700 !important;
+}

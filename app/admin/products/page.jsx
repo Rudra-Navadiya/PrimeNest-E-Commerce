@@ -680,7 +680,7 @@ const saveProduct = async (event) => {
 
             <button
               type="button"
-              className="pn-add-button"
+              className="group inline-flex w-fit items-center gap-2.5 rounded-xl bg-[#29251f] px-6 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#29251f]/15 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#42382b] hover:shadow-lg hover:shadow-[#29251f]/25 active:translate-y-0 focus:outline-none focus:ring-4 focus:ring-[#b89a65]/30"
               onClick={startCreating}
             >
               + Add Product

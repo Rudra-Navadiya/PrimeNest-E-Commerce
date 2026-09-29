@@ -1,115 +1,68 @@
-
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useCart } from "@/context/CartContext";
+
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const { cartCount } = useCart();
-  const router = useRouter();
+  const [activeMenu, setActiveMenu] = useState(null);
 
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Shop", href: "/shop" },
-    { name: "Men", href: "/men" },
-    { name: "Women", href: "/women" },
-    { name: "Accessories", href: "/accessories" },
-    { name: "Lifestyle", href: "/lifestyle" },
-  ];
+  const categories = {
+    MEN: ["Casual Shirts", "Sweatshirts", "Jackets"],
+    WOMEN: ["Dresses", "Tops", "T-Shirts", "Jeans"],
+    ACCESSORIES: ["Watches", "Bags", "Sunglasses"],
+    HOME: ["Home Decor", "Home Essentials"],
+    PERFUME: ["Men's Perfume", "Women's Perfume"],
+  };
 
   return (
-    <header className="premium-navbar">
-      <div className="navbar-inner">
-        <button
-          className="mobile-menu-button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-          aria-expanded={menuOpen}
-        >
-          <span></span>
-          <span></span>
-        </button>
+    <nav
+      className="navbar"
+      onMouseLeave={() => setActiveMenu(null)}
+    >
+      <div className="nav-links">
+        <a href="/">HOME</a>
+        <a href="/shop">SHOP</a>
 
-        <Link href="/" className="premium-logo">
-          PRIME<span>NEST</span>
-        </Link>
-
-        {/* Desktop navigation */}
-        <nav className="desktop-navigation">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href}>
-              {link.name}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Navbar icons */}
-        <div className="navbar-tools">
-          <button
-            aria-label="Search"
-            title="Search"
-            onClick={() => router.push("/shop")}
+        {Object.entries(categories).map(([category, subcategories]) => (
+          <div
+            className="nav-item"
+            key={category}
+            onMouseEnter={() => setActiveMenu(category)}
           >
-            ⌕
-          </button>
-
-          <button
-            aria-label="Login to your account"
-            title="Login"
-            onClick={() => router.push("/login")}
-          >
-            ♙
-          </button>
-
-          <button
-            aria-label="Wishlist"
-            title="Wishlist"
-            onClick={() => router.push("/wishlist")}
-          >
-            ♡
-          </button>
-
-          <Link
-            href="/cart"
-            className="navbar-cart"
-            aria-label={`Shopping cart with ${cartCount} items`}
-          >
-            Bag <sup>{cartCount}</sup>
-          </Link>
-        </div>
-      </div>
-
-      {/* Mobile navigation */}
-      {menuOpen && (
-        <nav className="mobile-navigation">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
+            <button
+              className={`nav-button ${
+                activeMenu === category ? "active" : ""
+              }`}
+              aria-expanded={activeMenu === category}
+              onFocus={() => setActiveMenu(category)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") setActiveMenu(null);
+              }}
             >
-              {link.name}
-            </Link>
-          ))}
+              {category}
+            </button>
 
-          <Link
-            href="/login"
-            onClick={() => setMenuOpen(false)}
-          >
-            ♙ Login / My Account
-          </Link>
+            {activeMenu === category && (
+              <div className="dropdown">
+                {/* <div className="dropdown-heading">
+                  <span>EXPLORE {category}</span>
+                </div> */}
 
-          <Link
-            href="/cart"
-            onClick={() => setMenuOpen(false)}
-          >
-            Bag ({cartCount})
-          </Link>
-        </nav>
-      )}
-    </header>
+                {subcategories.map((subcategory) => (
+                  <a
+                    href={`/shop?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory)}`}
+                    className="dropdown-link"
+                    key={subcategory}
+                  >
+                    <span>{subcategory}</span>
+                    
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </nav>
   );
 }

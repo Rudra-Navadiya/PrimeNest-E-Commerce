@@ -155,13 +155,6 @@ export default function AdminAnalyticsPage() {
             </p>
           </div>
 
-          <button
-            onClick={() => router.push("/admin")}
-            className="w-fit rounded-xl border border-[#ded8cc] bg-white px-5 py-3 text-sm font-medium transition hover:bg-[#f1eee7]"
-          >
-            ← Back to Dashboard
-          </button>
-
         <a
           href="/api/admin/reports/export"
           className="w-fit rounded-xl border border-[#a98952] bg-[#a98952] px-5 py-3 text-sm font-medium text-white transition hover:bg-[#927344]"
