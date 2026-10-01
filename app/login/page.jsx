@@ -89,9 +89,9 @@ async function handleSubmit(event) {
             <button
               type="button"
               className="pn-auth-text-button"
-              onClick={() =>
-                setMessage("Password recovery will be added later.")
-              }
+             onClick={() =>
+            toast.info("Password recovery will be added later.")
+           }
             >
               Forgot password?
             </button>

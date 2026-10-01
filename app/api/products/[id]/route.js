@@ -1,3 +1,4 @@
+
 import pool from "@/lib/db";
 
 export async function GET(request, { params }) {
@@ -13,6 +14,8 @@ export async function GET(request, { params }) {
         p.description,
         p.price,
         p.stock,
+        p.variants,
+        p.variant_label,
         c.name AS category,
         c.slug AS category_slug,
         pi.image_url AS image

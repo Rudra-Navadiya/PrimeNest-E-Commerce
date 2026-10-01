@@ -136,7 +136,7 @@ export default function AdminPage() {
             <span className="topbar-eyebrow">
               PRIMENEST / ADMINISTRATION
             </span>
-            <h1>Overview</h1>
+            <h1 style={{ fontWeight: 900 }}>Overview</h1>
           </div>
 
           <div className="admin-top-actions">

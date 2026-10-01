@@ -97,9 +97,9 @@ export default function AdminCustomersPage() {
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#9a8055]">
               PrimeNest Administration
             </p>
-            <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
-              Customers
-            </h1>
+              <h1 className="font-sans text-3xl font-bold tracking-tight sm:text-4xl">
+                Customers
+              </h1>
             <p className="mt-2 text-sm text-[#817b70]">
               View your registered customers and their order activity.
             </p>

@@ -148,7 +148,7 @@ export default function AdminAnalyticsPage() {
               PrimeNest Administration
             </p>
             <h1 className="font-serif text-3xl font-semibold tracking-tight sm:text-4xl">
-              Analytics & Reports
+              Analytics
             </h1>
             <p className="mt-2 text-sm text-[#817b70]">
               Monitor your store performance and sales activity.

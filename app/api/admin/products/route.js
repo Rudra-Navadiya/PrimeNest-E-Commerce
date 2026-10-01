@@ -13,6 +13,7 @@ async function isAdmin() {
   return user?.role === "admin";
 }
 
+
 // GET: Fetch products and categories
 export async function GET() {
   try {
@@ -33,6 +34,7 @@ export async function GET() {
           p.price,
           p.stock,
           p.category_id,
+          p.subcategory,
           c.name AS category,
           pi.image_url AS image
         FROM products p
@@ -43,6 +45,7 @@ export async function GET() {
           AND pi.is_primary = TRUE
         ORDER BY p.id DESC
       `),
+
       pool.query(`
         SELECT id, name, slug
         FROM categories
@@ -59,7 +62,11 @@ export async function GET() {
     console.error("Admin products GET error:", error);
 
     return Response.json(
-      { success: false, message: "Failed to fetch products" },
+      {
+        success: false,
+        message: "Failed to fetch products",
+        error: error.message,
+      },
       { status: 500 }
     );
   }
@@ -84,8 +91,8 @@ export async function POST(request) {
     const price = Number(body.price);
     const stock = Number(body.stock);
     const categoryId = Number(body.category_id);
+    const subcategory = String(body.subcategory || "").trim();
     const imageUrl = String(body.image_url || "").trim();
-
     if (!name) {
       return Response.json(
         { success: false, message: "Product name is required" },
@@ -163,13 +170,24 @@ export async function POST(request) {
       suffix += 1;
     }
 
-    const productResult = await client.query(
-      `INSERT INTO products
-        (name, slug, description, price, stock, category_id)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING id, name, slug, description, price, stock, category_id`,
-      [name, slug, description, price, stock, categoryId]
-    );
+    
+  const productResult = await client.query(
+  `INSERT INTO products
+    (name, slug, description, price, stock, category_id, subcategory)
+   VALUES ($1, $2, $3, $4, $5, $6, $7)
+   RETURNING
+     id, name, slug, description, price, stock,
+     category_id, subcategory`,
+  [
+    name,
+    slug,
+    description,
+    price,
+    stock,
+    categoryId,
+    subcategory || null,
+  ]
+);
 
     const product = productResult.rows[0];
 

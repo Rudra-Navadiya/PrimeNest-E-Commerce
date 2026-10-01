@@ -5,6 +5,118 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+  const subcategoryOptions = {
+  men: [
+    "T-Shirts",
+    "Casual Shirts",
+    "Formal Shirts",
+    "Sweatshirts",
+    "Sweaters",
+    "Jackets",
+    "Jeans",
+    "Casual Trousers",
+    "Formal Trousers",
+    "Shorts",
+    "Track Pants & Joggers",
+  ],
+  women: [
+    "Dresses",
+    "Tops",
+    "T-Shirts",
+    "Jeans",
+    "Shirts",
+    "Trousers",
+    "Skirts",
+    "Jackets",
+  ],
+  accessories: [
+    "Bags",
+    "Watches",
+    "Belts",
+    "Wallets",
+    "Sunglasses",
+    "Jewellery",
+    "Caps",
+  ],
+  "home essentials": [
+    "Bedding",
+    "Cushions",
+    "Home Decor",
+    "Lighting",
+    "Kitchen Essentials",
+    "Storage",
+  ],
+  home: [
+    "Bedding",
+    "Cushions",
+    "Home Decor",
+    "Lighting",
+    "Kitchen Essentials",
+    "Storage",
+  ],
+  perfume: [
+    "Men's Perfume",
+    "Women's Perfume",
+    "Unisex Perfume",
+    "Body Mist",
+    "Gift Sets",
+  ],
+  footwear: [
+    "Sneakers",
+    "Casual Shoes",
+    "Formal Shoes",
+    "Sandals",
+    "Slippers",
+    "Sports Shoes",
+  ],
+  kids: [
+    "T-Shirts",
+    "Shirts",
+    "Dresses",
+    "Jeans",
+    "Shorts",
+    "Footwear",
+  ],
+  beauty: [
+    "Skincare",
+    "Makeup",
+    "Haircare",
+    "Body Care",
+    "Fragrance",
+  ],
+};
+
+   
+function getSubcategoryOptions(category) {
+  if (!category) return [];
+
+  const key = String(category.name || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ");
+
+  const aliases = {
+    men: "men",
+    mens: "men",
+    "men s": "men",
+    women: "women",
+    womens: "women",
+    "women s": "women",
+    accessories: "accessories",
+    home: "home essentials",
+    "home essentials": "home essentials",
+    perfume: "perfume",
+    perfumes: "perfume",
+    footwear: "footwear",
+    shoes: "footwear",
+    kids: "kids",
+    beauty: "beauty",
+  };
+
+  return subcategoryOptions[aliases[key] || key] || [];
+}
+
 export default function AdminProductsPage() {
   const router = useRouter();
 
@@ -17,14 +129,17 @@ export default function AdminProductsPage() {
   const [deletingId, setDeletingId] = useState(null);
 
   const [form, setForm] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    price: "",
-    stock: "",
-    category_id: "",
-    image: "",
-  });
+  name: "",
+  slug: "",
+  description: "",
+  price: "",
+  stock: "",
+  category_id: "",
+  subcategory: "",
+  image: "",
+});
+
+
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
@@ -99,13 +214,14 @@ export default function AdminProductsPage() {
   };
 
   const handleFormChange = (event) => {
-    const { name, value } = event.target;
+  const { name, value } = event.target;
 
-    setForm((current) => ({
-      ...current,
-      [name]: value,
-    }));
-  };
+  setForm((current) => ({
+    ...current,
+    [name]: value,
+    ...(name === "category_id" ? { subcategory: "" } : {}),
+  }));
+};
 
   
 const saveProduct = async (event) => {
@@ -167,6 +283,7 @@ const saveProduct = async (event) => {
           price: Number(form.price),
           stock: Number(form.stock),
           category_id: Number(form.category_id),
+          subcategory: form.subcategory,
           image_url: form.image.trim(),
         }),
       }
@@ -292,11 +409,12 @@ const saveProduct = async (event) => {
         }
 
         .pn-title {
-          margin: 7px 0 4px;
-          font-family: Georgia, "Times New Roman", serif;
-          font-size: 34px;
-          line-height: 1.2;
-        }
+        margin: 7px 0 4px;
+        font-family: 'Manrope', sans-serif;
+        font-size: 34px;
+        font-weight: 900;
+        line-height: 1.2;
+      }
 
         .pn-subtitle {
           margin: 0;
@@ -952,6 +1070,40 @@ const saveProduct = async (event) => {
                   />
                 </div>
               </div>
+
+              <div className="pn-field pn-field-full">
+                  <label className="pn-label" htmlFor="pn-subcategory">
+                    Subcategory
+                  </label>
+
+                  <select
+                    id="pn-subcategory"
+                    className="pn-select"
+                    name="subcategory"
+                    value={form.subcategory}
+                    onChange={handleFormChange}
+                    disabled={!form.category_id}
+                  >
+                    <option value="">Select subcategory</option>
+
+                    {getSubcategoryOptions(
+                      categories.find(
+                        (category) =>
+                          String(category.id) === String(form.category_id)
+                      )
+                    ).map((subcategory) => (
+                      <option key={subcategory} value={subcategory}>
+                        {subcategory}
+                      </option>
+                    ))}
+                  </select>
+
+                  {!form.category_id && (
+                    <small style={{ color: "#898276", fontSize: 11 }}>
+                      Select a category first.
+                    </small>
+                  )}
+                </div>
 
               <div className="pn-modal-actions">
                 <button

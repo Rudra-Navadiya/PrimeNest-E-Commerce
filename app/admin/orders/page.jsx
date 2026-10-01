@@ -184,12 +184,11 @@ export default function AdminOrdersPage() {
         }
 
         .pn-title {
-          margin: 7px 0 4px;
-          font-family: Georgia, "Times New Roman", serif;
-          font-size: 34px;
-          line-height: 1.2;
+        font-family: 'Manrope', sans-serif;
+        font-size: 34px;
+        font-weight: 700;
         }
-
+       
         .pn-subtitle {
           margin: 0;
           color: #898276;

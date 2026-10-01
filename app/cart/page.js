@@ -111,13 +111,19 @@ export default function CartPage() {
                     key={item.id}
                   >
 
-                    <div
-                      className="cart-item-image"
-                      style={{
-                        backgroundImage:
-                          `url(${item.image})`,
-                      }}
-                    />
+                    <div className="cart-item-image">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <span>No Image</span>
+                      )}
+                    </div>
 
                     <div className="cart-item-details">
 
