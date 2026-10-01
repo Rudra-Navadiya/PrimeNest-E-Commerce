@@ -7,10 +7,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  
+ 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -77,7 +79,7 @@ async function handleSubmit(event) {
             id="user-email"
             type="email"
             placeholder="you@example.com"
-            autoComplete="email"
+            autoComplete="off"
             maxLength={255}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
@@ -102,7 +104,7 @@ async function handleSubmit(event) {
               id="user-password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              autoComplete="current-password"
+              autoComplete="off"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required

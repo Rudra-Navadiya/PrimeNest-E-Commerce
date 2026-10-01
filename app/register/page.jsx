@@ -4,8 +4,12 @@
 import { toast } from "sonner";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [name, setName] = useState("");
@@ -57,6 +61,8 @@ export default function RegisterPage() {
       toast.success("Account created successfully!", {
         description: "Welcome to PrimeNest!",
       });
+      router.replace("/login");
+      router.refresh();
       setName("");
       setEmail("");
       setPassword("");

@@ -312,6 +312,11 @@ useEffect(() => {
 
       const data = await response.json();
 
+      if (response.status === 401) {
+        setOrders([]);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(
           data.message || "Unable to load your orders."
@@ -357,11 +362,11 @@ useEffect(() => {
 }
 
   // Cancel editing
-  function handleCancel() {
-    setEditName(user?.name || "");
-    setIsEditing(false);
-    setEditDob(toDisplayDob(user?.date_of_birth));
-  }
+  // function handleCancel() {
+  //   setEditName(user?.name || "");
+  //   setIsEditing(false);
+  //   setEditDob(toDisplayDob(user?.date_of_birth));
+  // }
 
   // Save profile name through the profile update API
   
