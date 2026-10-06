@@ -226,9 +226,11 @@ const catalog = [
     stock: 30,
     variant_label: "Waist",
     variants: [
-      { label: "26", stock: 6 },
       { label: "28", stock: 12 },
-      { label: "30", stock: 12 }
+      { label: "30", stock: 16 },
+      { label: "32", stock: 24 },
+      { label: "34", stock: 18 },
+      { label: "36", stock: 10 }
     ],
     image: "https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?auto=format&fit=crop&w=900&q=85"
   },

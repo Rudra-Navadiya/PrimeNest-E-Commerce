@@ -303,7 +303,7 @@ BEGIN
             40,
             cat_men,
             'Jeans',
-            '[{"label": "30", "stock": 8}, {"label": "32", "stock": 16}, {"label": "34", "stock": 12}, {"label": "36", "stock": 4}]'::jsonb,
+            '[{"label": "28", "stock": 8}, {"label": "30", "stock": 12}, {"label": "32", "stock": 16}, {"label": "34", "stock": 12}, {"label": "36", "stock": 4}]'::jsonb,
             'Waist'
         ) RETURNING id INTO p_id;
 

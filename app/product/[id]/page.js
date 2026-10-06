@@ -66,6 +66,7 @@ export default function ProductPage({ params }) {
   // const [isTryOnOpen, setIsTryOnOpen] = useState(false); // Temporarily disabled: Virtual Try-On
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [guideTab, setGuideTab] = useState("auto");
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [is360Active, setIs360Active] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50, active: false });
@@ -92,9 +93,8 @@ export default function ProductPage({ params }) {
     nameLower.includes("shoe")
   );
 
-  const isBagOrAccessory = Boolean(
+  const isAccessoryCategory = Boolean(
     catLower === "accessories" ||
-    subLower.includes("bag") ||
     subLower.includes("backpack") ||
     subLower.includes("handbag") ||
     subLower.includes("tote") ||
@@ -102,11 +102,36 @@ export default function ProductPage({ params }) {
     subLower.includes("watch") ||
     subLower.includes("cap") ||
     subLower.includes("sunglass") ||
-    nameLower.includes("backpack") ||
-    nameLower.includes("bag") ||
-    nameLower.includes("pack") ||
-    nameLower.includes("wallet") ||
-    nameLower.includes("watch")
+    subLower.includes("hat") ||
+    subLower.includes("belt") ||
+    (subLower.includes("bag") && !subLower.includes("baggy"))
+  );
+
+  const isJeans = Boolean(
+    !isAccessoryCategory && (
+      subLower.includes("jean") ||
+      subLower.includes("trouser") ||
+      (subLower.includes("pant") && !subLower.includes("panther")) ||
+      nameLower.includes("jean") ||
+      nameLower.includes("jeggings") ||
+      nameLower.includes("trouser") ||
+      (nameLower.includes("pant") && !nameLower.includes("panther")) ||
+      (nameLower.includes("denim") && !nameLower.includes("jacket") && !nameLower.includes("shirt") && !nameLower.includes("bag") && !nameLower.includes("cap"))
+    )
+  );
+
+  const isBagOrAccessory = Boolean(
+    !isJeans && (
+      isAccessoryCategory ||
+      nameLower.includes("backpack") ||
+      nameLower.includes("handbag") ||
+      nameLower.includes("tote") ||
+      nameLower.includes("wallet") ||
+      nameLower.includes("watch") ||
+      nameLower.includes("sunglass") ||
+      (/\b(bag|bags)\b/i.test(nameLower) && !nameLower.includes("baggy")) ||
+      (/\b(pack|packs)\b/i.test(nameLower) && !nameLower.includes("backpack"))
+    )
   );
 
   const isPerfume = Boolean(
@@ -118,7 +143,7 @@ export default function ProductPage({ params }) {
   );
 
   const isClothing = !isFootwear && !isBagOrAccessory && !isPerfume;
-  const hasSizeSelection = !isBagOrAccessory && !isPerfume && (isClothing || isFootwear);
+  const hasSizeSelection = isJeans || isFootwear || (!isBagOrAccessory && !isPerfume && isClothing);
 
   // Dynamic comparison options from store catalog
   const compareOptions = useMemo(() => {
@@ -256,19 +281,26 @@ export default function ProductPage({ params }) {
         setProduct(data.product);
         setRelatedProducts(data.relatedProducts || []);
 
-        // Default variant selection based on product category (L for clothing, UK 9 for footwear)
+        // Default variant selection based on product category (32 for jeans, L for clothing, UK 9 for footwear)
         const sub = (data.product?.subcategory || "").toLowerCase();
         const cat = (data.product?.category || "").toLowerCase();
         const nm = (data.product?.name || "").toLowerCase();
-        const isFoot = cat === "footwear" || sub.includes("shoes") || sub.includes("sneaker") || nm.includes("sneaker");
-        const isCloth = !isFoot && (cat === "men" || cat === "women" || cat === "kids" || sub.includes("shirt") || sub.includes("t-shirt") || sub.includes("polo") || nm.includes("shirt") || nm.includes("t-shirt"));
-        const targetDefault = isCloth ? "L" : "UK 9";
+        const isFoot = cat === "footwear" || sub.includes("shoes") || sub.includes("sneaker") || nm.includes("sneaker") || nm.includes("shoe");
+        const isJns = sub.includes("jean") || nm.includes("jean") || sub.includes("denim") || nm.includes("denim") || nm.includes("jeggings");
+        const targetDefault = isJns ? "32" : isFoot ? "UK 9" : "L";
 
-        if (Array.isArray(data.product?.variants) && data.product.variants.length > 0) {
-          const hasTarget = data.product.variants.some(
-            (v) => (v.label || v) === targetDefault
+        const validJeansVariants = isJns && Array.isArray(data.product?.variants) && data.product.variants.length > 0 &&
+          data.product.variants.some((v) => /^\d+$/.test(String(v.label || v).trim()));
+
+        const activeVariantsList = isJns
+          ? (validJeansVariants ? data.product.variants : [{ label: "28" }, { label: "30" }, { label: "32" }, { label: "34" }, { label: "36" }])
+          : (Array.isArray(data.product?.variants) && data.product.variants.length > 0 ? data.product.variants : null);
+
+        if (activeVariantsList && activeVariantsList.length > 0) {
+          const hasTarget = activeVariantsList.some(
+            (v) => String(v.label || v) === String(targetDefault)
           );
-          setSelectedVariant(hasTarget ? targetDefault : data.product.variants[0].label || data.product.variants[0]);
+          setSelectedVariant(hasTarget ? targetDefault : (activeVariantsList[0].label || activeVariantsList[0]));
         } else {
           setSelectedVariant(targetDefault);
         }
@@ -332,6 +364,15 @@ export default function ProductPage({ params }) {
       maximumFractionDigits: 2,
     });
 
+  // Default jeans size options: 28, 30, 32, 34, 36
+  const defaultJeansSizes = [
+    { label: "28", stock: 12 },
+    { label: "30", stock: 16 },
+    { label: "32", stock: 24 },
+    { label: "34", stock: 18 },
+    { label: "36", stock: 10 },
+  ];
+
   // Default clothing size options: XS, S, M, L, XL, XXL
   const defaultClothingSizes = [
     { label: "XS", stock: 8 },
@@ -352,16 +393,18 @@ export default function ProductPage({ params }) {
     { label: "UK 11", stock: 8 },
   ];
 
-  const rawVariants =
-    Array.isArray(product?.variants) && product.variants.length > 0
-      ? product.variants
-      : isClothing
-      ? defaultClothingSizes
-      : isFootwear
-      ? defaultShoeSizes
-      : defaultClothingSizes;
+  const hasValidWaistVariants = isJeans && Array.isArray(product?.variants) && product.variants.length > 0 &&
+    product.variants.some((v) => /^\d+$/.test(String(v.label || v).trim()));
 
-  const recommendedSize = isClothing ? "L" : "UK 9";
+  const rawVariants = isJeans
+    ? (hasValidWaistVariants ? product.variants : defaultJeansSizes)
+    : Array.isArray(product?.variants) && product.variants.length > 0
+    ? product.variants
+    : isFootwear
+    ? defaultShoeSizes
+    : defaultClothingSizes;
+
+  const recommendedSize = isJeans ? "32" : isFootwear ? "UK 9" : "L";
 
   const variants = rawVariants
     .map((variant) =>
@@ -374,6 +417,19 @@ export default function ProductPage({ params }) {
           }
     )
     .filter((variant) => variant.label);
+
+  // Auto-sync selectedVariant with available variants when product loads
+  useEffect(() => {
+    if (variants.length > 0 && !variants.some((v) => v.label === selectedVariant)) {
+      if (isJeans) {
+        setSelectedVariant(variants.some((v) => v.label === "32") ? "32" : variants[0].label);
+      } else if (isFootwear) {
+        setSelectedVariant(variants.some((v) => v.label === "UK 9") ? "UK 9" : variants[0].label);
+      } else {
+        setSelectedVariant(variants.some((v) => v.label === "L") ? "L" : variants[0].label);
+      }
+    }
+  }, [variants, selectedVariant, isJeans, isFootwear]);
 
   const hasVariants = variants.length > 0;
 
@@ -514,15 +570,62 @@ export default function ProductPage({ params }) {
   // Complete outfit pieces definition
   const outfitPieces = useMemo(() => {
     const apparelSizes = ["XS", "S", "M", "L", "XL", "XXL"];
+    const jeansSizes = ["28", "30", "32", "34", "36"];
     const shoeSizes = ["UK 6", "UK 7", "UK 8", "UK 9", "UK 10", "UK 11"];
     const productSizes =
       Array.isArray(product?.variants) && product.variants.length > 0
         ? product.variants.map((v) =>
             typeof v === "object" ? v.label || v.size || v.name : String(v)
           )
+        : isJeans
+        ? jeansSizes
         : isClothing
         ? apparelSizes
         : shoeSizes;
+
+    if (isJeans) {
+      return [
+        {
+          key: "jeans",
+          id: product?.id || 991,
+          name: product?.name || "Vintage Washed Indigo Denim Jeans",
+          category: product?.subcategory || "Denim & Bottoms",
+          tag: "Core Denim",
+          price: Number(product?.price) || 2499,
+          image:
+            currentImage ||
+            product?.images?.[0] ||
+            "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&q=80",
+          sizes: productSizes,
+          sizeType: "Waist Size",
+          desc: "13.5oz ring-spun raw denim with authentic distressed vintage wash",
+        },
+        {
+          key: "tee",
+          id: 992,
+          name: "Heavyweight Boxy Tee & Snapback Cap Set",
+          category: "Apparel",
+          tag: "Street Essential",
+          price: 1299,
+          image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400&q=80",
+          sizes: apparelSizes,
+          sizeType: "Size (Chest)",
+          desc: "Heavyweight 240 GSM organic cotton boxy drop-shoulder tee",
+        },
+        {
+          key: "shoe",
+          id: 104,
+          name: "Minimalist Low-Top Court Sneakers",
+          category: "Footwear",
+          tag: "Clean Court",
+          price: 3499,
+          image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&q=80",
+          sizes: shoeSizes,
+          sizeType: "Shoe Size (UK)",
+          desc: "Sleek low-profile white sneakers designed for effortless daily styling",
+        },
+      ];
+    }
 
     if (isClothing) {
       return [
@@ -1477,17 +1580,20 @@ export default function ProductPage({ params }) {
               </div>
             )}
 
-            {/* Size Section - Only shown for clothing and footwear */}
+            {/* Size Section - Only shown for clothing, jeans and footwear */}
             {hasSizeSelection && (
               <div className="dark-size-section">
                 <div className="dark-size-header">
                   <span className="dark-section-label">
-                    {isClothing ? "Select Size" : "Size (UK/IN)"}
+                    {isJeans ? "Select Waist Size (Inches)" : isClothing ? "Select Size" : "Size (UK/IN)"}
                   </span>
                   <button
                     type="button"
                     className="dark-size-guide-link"
-                    onClick={() => setShowSizeGuide(true)}
+                    onClick={() => {
+                      setGuideTab(isJeans ? "jeans" : isFootwear ? "footwear" : "clothing");
+                      setShowSizeGuide(true);
+                    }}
                   >
                     <Ruler size={13} />
                     <span>Size Guide</span>
@@ -1777,145 +1883,246 @@ export default function ProductPage({ params }) {
       {/* =========================================================================
           SIZE GUIDE MODAL
          ========================================================================= */}
-      {showSizeGuide && (
-        <div
-          className="dark-lightbox-backdrop"
-          onClick={() => setShowSizeGuide(false)}
-        >
-          <div
-            className="dark-size-guide-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="size-guide-header">
-              <h3>{isClothing ? "T-Shirt & Shirt Size Chart" : "Footwear Sizing Chart"}</h3>
-              <button
-                type="button"
-                className="guide-close-btn"
-                onClick={() => setShowSizeGuide(false)}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <p className="size-guide-intro">
-              {isClothing
-                ? "Standard body & garment measurements in inches & cm for regular, relaxed & oversized fit tees:"
-                : "Universal sizing matrix for sneaker & footwear silhouettes:"}
-            </p>
+      {showSizeGuide && (() => {
+        const activeGuideTab = guideTab === "auto" ? (isJeans ? "jeans" : isFootwear ? "footwear" : "clothing") : guideTab;
 
-            {isClothing ? (
-              <>
-                <table className="dark-size-table">
-                  <thead>
-                    <tr>
-                      <th>Size</th>
-                      <th>Chest (Inches)</th>
-                      <th>Length (Inches)</th>
-                      <th>Shoulder (Inches)</th>
-                      <th>Chest (cm)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>XS</strong></td>
-                      <td>36 in</td>
-                      <td>26.5 in</td>
-                      <td>16.5 in</td>
-                      <td>91 cm</td>
-                    </tr>
-                    <tr>
-                      <td><strong>S</strong></td>
-                      <td>38 in</td>
-                      <td>27.5 in</td>
-                      <td>17.5 in</td>
-                      <td>96 cm</td>
-                    </tr>
-                    <tr>
-                      <td><strong>M</strong></td>
-                      <td>40 in</td>
-                      <td>28.5 in</td>
-                      <td>18.5 in</td>
-                      <td>102 cm</td>
-                    </tr>
-                    <tr className="recommended-row">
-                      <td><strong>L ✨ (Recommended)</strong></td>
-                      <td>42 in</td>
-                      <td>29.5 in</td>
-                      <td>19.5 in</td>
-                      <td>107 cm</td>
-                    </tr>
-                    <tr>
-                      <td><strong>XL</strong></td>
-                      <td>44 in</td>
-                      <td>30.5 in</td>
-                      <td>20.5 in</td>
-                      <td>112 cm</td>
-                    </tr>
-                    <tr>
-                      <td><strong>XXL</strong></td>
-                      <td>46 in</td>
-                      <td>31.5 in</td>
-                      <td>21.5 in</td>
-                      <td>117 cm</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div style={{ marginTop: "14px", padding: "10px 14px", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "10px", fontSize: "12px", color: "#92400e" }}>
-                  💡 <strong>Fit Tip:</strong> For modern relaxed or oversized fit streetwear, choose your standard size. For an athletic slim fit, consider sizing one step down.
-                </div>
-              </>
-            ) : (
-              <table className="dark-size-table">
-                <thead>
-                  <tr>
-                    <th>UK / India</th>
-                    <th>US Men</th>
-                    <th>EU</th>
-                    <th>Foot Length</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><strong>UK 6</strong></td>
-                    <td>US 7</td>
-                    <td>40</td>
-                    <td>25.0 cm</td>
-                  </tr>
-                  <tr>
-                    <td><strong>UK 7</strong></td>
-                    <td>US 8</td>
-                    <td>41</td>
-                    <td>25.5 cm</td>
-                  </tr>
-                  <tr>
-                    <td><strong>UK 8</strong></td>
-                    <td>US 9</td>
-                    <td>42.5</td>
-                    <td>26.5 cm</td>
-                  </tr>
-                  <tr className="recommended-row">
-                    <td><strong>UK 9 ✨ (Recommended)</strong></td>
-                    <td>US 10</td>
-                    <td>44</td>
-                    <td>27.5 cm</td>
-                  </tr>
-                  <tr>
-                    <td><strong>UK 10</strong></td>
-                    <td>US 11</td>
-                    <td>45</td>
-                    <td>28.5 cm</td>
-                  </tr>
-                  <tr>
-                    <td><strong>UK 11</strong></td>
-                    <td>US 12</td>
-                    <td>46</td>
-                    <td>29.5 cm</td>
-                  </tr>
-                </tbody>
-              </table>
-            )}
+        return (
+          <div
+            className="dark-lightbox-backdrop"
+            onClick={() => setShowSizeGuide(false)}
+          >
+            <div
+              className="dark-size-guide-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="size-guide-header">
+                <h3>
+                  {activeGuideTab === "jeans"
+                    ? "Denim & Jeans Sizing Chart (Waist 28 - 36)"
+                    : activeGuideTab === "footwear"
+                    ? "Footwear Sizing Chart"
+                    : "T-Shirt & Shirt Size Chart"}
+                </h3>
+                <button
+                  type="button"
+                  className="guide-close-btn"
+                  onClick={() => setShowSizeGuide(false)}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              {/* Guide Category Switching Tabs */}
+              <div className="size-guide-tabs-row">
+                <button
+                  type="button"
+                  className={`guide-tab-pill ${activeGuideTab === "jeans" ? "active" : ""}`}
+                  onClick={() => setGuideTab("jeans")}
+                >
+                  👖 Jeans (28-36)
+                </button>
+                <button
+                  type="button"
+                  className={`guide-tab-pill ${activeGuideTab === "clothing" ? "active" : ""}`}
+                  onClick={() => setGuideTab("clothing")}
+                >
+                  👕 Shirts & Tops (XS-XXL)
+                </button>
+                <button
+                  type="button"
+                  className={`guide-tab-pill ${activeGuideTab === "footwear" ? "active" : ""}`}
+                  onClick={() => setGuideTab("footwear")}
+                >
+                  👟 Footwear (UK 6-11)
+                </button>
+              </div>
+
+              {activeGuideTab === "jeans" ? (
+                <>
+                  <p className="size-guide-intro">
+                    Standard waist, hip, inseam length & thigh measurements for modern slim, regular, straight & relaxed denim fits:
+                  </p>
+                  <table className="dark-size-table">
+                    <thead>
+                      <tr>
+                        <th>Size (Waist)</th>
+                        <th>Waist (Inches)</th>
+                        <th>Waist (cm)</th>
+                        <th>Hip (Inches)</th>
+                        <th>Inseam (Inches)</th>
+                        <th>Thigh (Inches)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>28</strong></td>
+                        <td>28 in</td>
+                        <td>71 cm</td>
+                        <td>36 in</td>
+                        <td>30 in</td>
+                        <td>21.5 in</td>
+                      </tr>
+                      <tr>
+                        <td><strong>30</strong></td>
+                        <td>30 in</td>
+                        <td>76 cm</td>
+                        <td>38 in</td>
+                        <td>31 in</td>
+                        <td>22.5 in</td>
+                      </tr>
+                      <tr className="recommended-row">
+                        <td><strong>32 ✨ (Recommended)</strong></td>
+                        <td>32 in</td>
+                        <td>81 cm</td>
+                        <td>40 in</td>
+                        <td>32 in</td>
+                        <td>23.5 in</td>
+                      </tr>
+                      <tr>
+                        <td><strong>34</strong></td>
+                        <td>34 in</td>
+                        <td>86 cm</td>
+                        <td>42 in</td>
+                        <td>32 in</td>
+                        <td>24.5 in</td>
+                      </tr>
+                      <tr>
+                        <td><strong>36</strong></td>
+                        <td>36 in</td>
+                        <td>91 cm</td>
+                        <td>44 in</td>
+                        <td>32 in</td>
+                        <td>25.5 in</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style={{ marginTop: "14px", padding: "10px 14px", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "10px", fontSize: "12px", color: "#92400e" }}>
+                    💡 <strong>Denim Fit Tip:</strong> For standard straight and relaxed jeans, select your exact waist size (e.g. 32). For rigid raw selvedge denim, size up by 1 inch if you prefer a looser thigh drape. For comfort stretch denim, your true waist fits perfectly.
+                  </div>
+                </>
+              ) : activeGuideTab === "clothing" ? (
+                <>
+                  <p className="size-guide-intro">
+                    Standard body & garment measurements in inches & cm for regular, relaxed & oversized fit tees:
+                  </p>
+                  <table className="dark-size-table">
+                    <thead>
+                      <tr>
+                        <th>Size</th>
+                        <th>Chest (Inches)</th>
+                        <th>Length (Inches)</th>
+                        <th>Shoulder (Inches)</th>
+                        <th>Chest (cm)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>XS</strong></td>
+                        <td>36 in</td>
+                        <td>26.5 in</td>
+                        <td>16.5 in</td>
+                        <td>91 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>S</strong></td>
+                        <td>38 in</td>
+                        <td>27.5 in</td>
+                        <td>17.5 in</td>
+                        <td>96 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>M</strong></td>
+                        <td>40 in</td>
+                        <td>28.5 in</td>
+                        <td>18.5 in</td>
+                        <td>102 cm</td>
+                      </tr>
+                      <tr className="recommended-row">
+                        <td><strong>L ✨ (Recommended)</strong></td>
+                        <td>42 in</td>
+                        <td>29.5 in</td>
+                        <td>19.5 in</td>
+                        <td>107 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>XL</strong></td>
+                        <td>44 in</td>
+                        <td>30.5 in</td>
+                        <td>20.5 in</td>
+                        <td>112 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>XXL</strong></td>
+                        <td>46 in</td>
+                        <td>31.5 in</td>
+                        <td>21.5 in</td>
+                        <td>117 cm</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div style={{ marginTop: "14px", padding: "10px 14px", background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "10px", fontSize: "12px", color: "#92400e" }}>
+                    💡 <strong>Fit Tip:</strong> For modern relaxed or oversized fit streetwear, choose your standard size. For an athletic slim fit, consider sizing one step down.
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="size-guide-intro">
+                    Universal sizing matrix for sneaker & footwear silhouettes:
+                  </p>
+                  <table className="dark-size-table">
+                    <thead>
+                      <tr>
+                        <th>UK / India</th>
+                        <th>US Men</th>
+                        <th>EU</th>
+                        <th>Foot Length</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><strong>UK 6</strong></td>
+                        <td>US 7</td>
+                        <td>40</td>
+                        <td>25.0 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>UK 7</strong></td>
+                        <td>US 8</td>
+                        <td>41</td>
+                        <td>25.5 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>UK 8</strong></td>
+                        <td>US 9</td>
+                        <td>42.5</td>
+                        <td>26.5 cm</td>
+                      </tr>
+                      <tr className="recommended-row">
+                        <td><strong>UK 9 ✨ (Recommended)</strong></td>
+                        <td>US 10</td>
+                        <td>44</td>
+                        <td>27.5 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>UK 10</strong></td>
+                        <td>US 11</td>
+                        <td>45</td>
+                        <td>28.5 cm</td>
+                      </tr>
+                      <tr>
+                        <td><strong>UK 11</strong></td>
+                        <td>US 12</td>
+                        <td>46</td>
+                        <td>29.5 cm</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

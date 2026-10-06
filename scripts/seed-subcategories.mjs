@@ -145,7 +145,6 @@ async function main() {
     { catId: 3, name: "Ties" },
     { catId: 3, name: "Men's Sports Shoes" },
     { catId: 3, name: "Handbags" },
-    { catId: 3, name: "Bracelets" },
 
     // --- FOOTWEAR (category_id: 5) ---
     { catId: 5, name: "Men's Sneakers" },

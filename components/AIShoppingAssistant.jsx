@@ -14,6 +14,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 
 const STARTER_PROMPTS = [
@@ -58,6 +59,7 @@ function formatAssistantMessage(text) {
 }
 
 export default function AIShoppingAssistant() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -164,6 +166,10 @@ export default function AIShoppingAssistant() {
       },
     ]);
   };
+
+  if (pathname === "/login") {
+    return null;
+  }
 
   return (
     <>

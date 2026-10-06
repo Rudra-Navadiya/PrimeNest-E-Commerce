@@ -1,0 +1,690 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+/* =========================================================================
+   PRIMENEST 4K ULTRA-LUXURY GLASSMORPHISM LOGIN PAGE
+   Aesthetic: Haute Couture, Brunello Cucinelli, Ralph Lauren, Editorial
+   Palette:
+   - Ivory / Warm Alabaster: #F7F4EE
+   - Champagne Gold: #C8A15A
+   - Luminous Gold Gradient: #BFA05D to #F8ECC4
+   - Deep Luxury Espresso: #3A2618
+   - Frosted Glass Surface: rgba(255, 255, 255, 0.44)
+   ========================================================================= */
+
+/* Root and Viewport Setup */
+html:has(.luxury-login-page),
+body:has(.luxury-login-page) {
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-color: #f7f4ee !important;
+  overflow: hidden !important;
+}
+
+/* Hide floating AI shopping assistant button on login page */
+body:has(.luxury-login-page) .ai-stylist-fab,
+body:has(.luxury-login-page) .ai-chat-window,
+body:has(.luxury-login-page) .ai-assistant-fab-container,
+body:has(.luxury-login-page) .ai-assistant-wrapper,
+body:has(.luxury-login-page) [class*="ai-stylist"],
+body:has(.luxury-login-page) [class*="ai-assistant"],
+body:has(.luxury-login-page) [class*="AIShoppingAssistant"] {
+  display: none !important;
+}
+
+/* Main Screen Wrapper */
+.luxury-login-page {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f7f4ee;
+  overflow-y: auto;
+  overflow-x: hidden;
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #1b1b1b;
+  box-sizing: border-box;
+}
+
+/* -------------------------------------------------------------------------
+   4K HIGH-CLARITY BACKGROUND WITH AMBIENT MOTION ANIMATION
+   ------------------------------------------------------------------------- */
+.luxury-bg-viewport {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.luxury-bg-layer {
+  position: absolute;
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  background: url("/images/luxury-login-bg-4k.jpg") center center / cover no-repeat;
+  filter: contrast(101%) brightness(100.5%);
+  animation: ambientBgBreathing 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes ambientBgBreathing {
+  0% {
+    transform: scale(1.0) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.03) translate(-0.8%, -0.4%);
+  }
+  100% {
+    transform: scale(1.015) translate(0.4%, 0.3%);
+  }
+}
+
+.luxury-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 48%,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(240, 230, 215, 0.12) 60%,
+    rgba(60, 45, 30, 0.06) 100%
+  );
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------
+   LUMINOUS GOLDEN HALO ARC (Lens flare / Aura behind orchid and card)
+   ------------------------------------------------------------------------- */
+.luxury-halo-arc {
+  position: absolute;
+  top: 10%;
+  right: calc(50% - 310px);
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(235, 205, 140, 0.85);
+  border-right-color: rgba(220, 185, 115, 0.5);
+  filter: drop-shadow(0 0 24px rgba(212, 175, 55, 0.6));
+  pointer-events: none;
+  z-index: 1;
+  animation: haloRotate 24s linear infinite, haloPulse 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes haloRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes haloPulse {
+  0% {
+    opacity: 0.65;
+    filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.45));
+  }
+  100% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 32px rgba(235, 205, 140, 0.8));
+  }
+}
+
+.luxury-ambient-glow {
+  position: absolute;
+  top: 14%;
+  right: calc(50% - 250px);
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(
+    circle,
+    rgba(245, 225, 165, 0.38) 0%,
+    rgba(215, 180, 105, 0.12) 48%,
+    transparent 72%
+  );
+  filter: blur(42px);
+  pointer-events: none;
+  z-index: 1;
+  animation: glowSway 8s ease-in-out infinite alternate;
+}
+
+@keyframes glowSway {
+  0% {
+    transform: scale(0.96) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.06) translate(8px, -6px);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   CENTER STAGE & FROSTED GLASS LOGIN CARD
+   ------------------------------------------------------------------------- */
+.luxury-center-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 24px 16px;
+  margin: auto;
+  box-sizing: border-box;
+}
+
+/* Glassmorphism Frosted Card */
+.luxury-glass-card {
+  position: relative;
+  width: 100%;
+  max-width: 410px;
+  background: rgba(255, 255, 255, 0.44);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1.2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 28px;
+  padding: 34px 34px 28px;
+  box-shadow:
+    0 32px 70px -15px rgba(60, 42, 24, 0.14),
+    0 10px 26px -6px rgba(0, 0, 0, 0.04),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.88),
+    inset 0 -1px 2px rgba(200, 170, 130, 0.2);
+  box-sizing: border-box;
+  animation: cardEntrance 0.85s cubic-bezier(0.16, 1, 0.3, 1) both, cardHoverFloat 7s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.975);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardHoverFloat {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Logo */
+.card-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.card-logo-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  user-select: none;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(180, 140, 80, 0.2));
+}
+
+/* Heading: Welcome to PrimeNest */
+.card-heading {
+  font-family: "Playfair Display", "Cormorant Garamond", Georgia, serif !important;
+  font-size: 26.5px;
+  font-weight: 600;
+  color: #1c1815;
+  text-align: center;
+  margin: 10px 0 4px 0;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+/* Subtitle: Your gateway to luxury fashion. */
+.card-subheading {
+  font-size: 13px;
+  color: #6e645c;
+  text-align: center;
+  margin: 0 0 22px 0;
+  line-height: 1.45;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Form Layout */
+.card-form {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Rounded Pill Inputs */
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: 15px;
+  color: #9c8e82;
+  pointer-events: none;
+  transition: color 0.22s ease;
+}
+
+.luxury-text-input {
+  width: 100%;
+  height: 46px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(215, 200, 180, 0.65);
+  border-radius: 9999px;
+  padding: 0 16px 0 42px;
+  font-size: 13.5px;
+  color: #1c1815;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.22s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.luxury-text-input::placeholder {
+  color: #9c8e82;
+  font-weight: 400;
+}
+
+.luxury-text-input:hover {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(200, 175, 145, 0.85);
+}
+
+.luxury-text-input:focus {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: #c8a15a;
+  box-shadow:
+    0 0 0 3px rgba(200, 161, 90, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.input-wrap:focus-within .input-icon-left {
+  color: #c8a15a;
+}
+
+/* Password Eye Button */
+.password-eye-btn {
+  position: absolute;
+  right: 13px;
+  background: transparent;
+  border: none;
+  color: #9c8e82;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: color 0.2s, background 0.2s;
+}
+
+.password-eye-btn:hover {
+  color: #1c1815;
+  background: rgba(200, 175, 140, 0.15);
+}
+
+/* Remember Me & Forgot Password Row */
+.remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1px;
+  margin-bottom: 5px;
+}
+
+.remember-label-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #4a3f35;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  user-select: none;
+}
+
+.custom-checkbox-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid #cbbeac;
+  background-color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: all 0.18s ease;
+}
+
+.custom-checkbox-box.checked {
+  background-color: #c8a15a;
+  border-color: #c8a15a;
+  box-shadow: 0 1px 4px rgba(200, 161, 90, 0.35);
+}
+
+.forgot-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #c8a15a;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.forgot-btn:hover {
+  color: #9e7b36;
+  text-decoration: underline;
+}
+
+/* -------------------------------------------------------------------------
+   PRIMARY CTA: METALLIC GOLD BUTTON WITH SHIMMER SWEEP ANIMATION
+   ------------------------------------------------------------------------- */
+.card-submit-btn {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 48px;
+  border: 1px solid rgba(255, 240, 200, 0.4);
+  border-radius: 9999px;
+  background: linear-gradient(
+    135deg,
+    #a8843c 0%,
+    #c49f57 24%,
+    #eed89c 50%,
+    #bf994f 74%,
+    #8f6e2b 100%
+  );
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 3px rgba(45, 30, 10, 0.55);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow:
+    0 8px 24px -4px rgba(165, 125, 45, 0.48),
+    inset 0 1px 2px rgba(255, 255, 255, 0.75),
+    inset 0 -1px 2px rgba(90, 65, 20, 0.35);
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-top: 3px;
+}
+
+.btn-shine-sweep {
+  position: absolute;
+  top: -60%;
+  left: -70%;
+  width: 55%;
+  height: 220%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  animation: shineSweep 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shineSweep {
+  0% {
+    transform: translateX(-120%) rotate(25deg);
+  }
+  30%, 100% {
+    transform: translateX(340%) rotate(25deg);
+  }
+}
+
+.card-submit-btn:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  filter: brightness(1.04);
+  box-shadow:
+    0 12px 30px -4px rgba(195, 155, 75, 0.6),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.85);
+}
+
+.card-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.card-submit-btn:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spinBtn 0.75s linear infinite;
+}
+
+@keyframes spinBtn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Divider: -------- OR -------- */
+.card-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 7px 0 6px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(200, 180, 155, 0.45);
+}
+
+.divider-text {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #9c8e82;
+  text-transform: uppercase;
+}
+
+/* Google Sign In Button */
+.card-google-btn {
+  width: 100%;
+  height: 46px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(215, 200, 180, 0.65);
+  border-radius: 9999px;
+  color: #2b231d;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.card-google-btn:hover:not(:disabled) {
+  background: #ffffff;
+  border-color: rgba(195, 170, 140, 0.85);
+  box-shadow: 0 4px 12px rgba(60, 40, 20, 0.06);
+  transform: translateY(-1px);
+}
+
+.card-google-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Card Bottom Footer */
+.card-bottom-footer {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 12.5px;
+  color: #716458;
+}
+
+.card-bottom-link {
+  color: #c8a15a;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  margin-left: 4px;
+}
+
+.card-bottom-link:hover {
+  color: #9e7b36;
+  text-decoration: underline;
+}
+
+/* -------------------------------------------------------------------------
+   MARBLE PEDESTAL TRUST BADGES ROW (Below the Card)
+   ------------------------------------------------------------------------- */
+.pedestal-trust-row {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 8px 16px;
+  animation: trustFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+@keyframes trustFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+  transition: transform 0.2s ease;
+}
+
+.trust-item:hover {
+  transform: translateY(-2px);
+}
+
+.trust-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c7355;
+  filter: drop-shadow(0 1px 3px rgba(255, 255, 255, 0.8));
+}
+
+.trust-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 600;
+  color: #5c4735;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+}
+
+.trust-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(180, 150, 120, 0.35);
+}
+
+/* Corner Sparkle */
+.luxury-corner-sparkle {
+  position: fixed;
+  bottom: 24px;
+  right: 28px;
+  color: rgba(200, 175, 140, 0.7);
+  z-index: 1;
+  pointer-events: none;
+  animation: sparklePulse 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes sparklePulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.85) rotate(0deg);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1.15) rotate(15deg);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   RESPONSIVE DESIGN (Tablets & Mobile)
+   ------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .luxury-glass-card {
+    padding: 28px 20px 24px;
+    border-radius: 24px;
+  }
+
+  .card-heading {
+    font-size: 23px;
+  }
+
+  .pedestal-trust-row {
+    gap: 12px;
+    padding: 6px 10px;
+  }
+
+  .trust-text {
+    font-size: 10px;
+  }
+
+  .luxury-halo-arc {
+    width: 260px;
+    height: 260px;
+    right: calc(50% - 200px);
+  }
+}

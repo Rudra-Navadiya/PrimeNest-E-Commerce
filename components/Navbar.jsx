@@ -279,7 +279,6 @@ export default function Navbar() {
           heading: "Timepieces & Jewelry",
           items: [
             "Watches",
-            "Bracelets",
           ],
         },
       ],
