@@ -19,6 +19,19 @@ CREATE TABLE IF NOT EXISTS categories (
 );
 
 -- ------------------------------------------------------------------------------
+-- 1B. SUBCATEGORIES TABLE
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS subcategories (
+    id SERIAL PRIMARY KEY,
+    category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_subcategories_category_name UNIQUE (category_id, name)
+);
+
+-- ------------------------------------------------------------------------------
 -- 2. PRODUCTS TABLE
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS products (
@@ -30,6 +43,7 @@ CREATE TABLE IF NOT EXISTS products (
     stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
     category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
     subcategory VARCHAR(100),
+    subcategory_id INTEGER REFERENCES subcategories(id) ON DELETE SET NULL,
     variants JSONB DEFAULT '[]'::jsonb,
     variant_label VARCHAR(100),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -136,8 +150,11 @@ CREATE TABLE IF NOT EXISTS reviews (
 -- INDEXES FOR OPTIMAL QUERY PERFORMANCE
 -- ------------------------------------------------------------------------------
 CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
+CREATE INDEX IF NOT EXISTS idx_products_subcategory_id ON products(subcategory_id);
 CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
 CREATE INDEX IF NOT EXISTS idx_products_subcategory ON products(subcategory);
+CREATE INDEX IF NOT EXISTS idx_subcategories_category_id ON subcategories(category_id);
+CREATE INDEX IF NOT EXISTS idx_subcategories_slug ON subcategories(slug);
 CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images(product_id);
 CREATE INDEX IF NOT EXISTS idx_product_images_primary ON product_images(product_id, is_primary);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(LOWER(email));
