@@ -93,6 +93,9 @@ CREATE TABLE IF NOT EXISTS orders (
     address TEXT NOT NULL,
     total NUMERIC(10, 2) NOT NULL CHECK (total >= 0),
     status VARCHAR(50) NOT NULL DEFAULT 'pending',
+    payment_method VARCHAR(50) DEFAULT 'cod',
+    payment_status VARCHAR(50) DEFAULT 'pending',
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -114,6 +117,22 @@ CREATE TABLE IF NOT EXISTS order_items (
 );
 
 -- ------------------------------------------------------------------------------
+-- 8. REVIEWS TABLE (AI Review Summarizer & Product Ratings)
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS reviews (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    author_name VARCHAR(150) NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    title VARCHAR(255),
+    comment TEXT NOT NULL,
+    fit_feedback VARCHAR(50) DEFAULT 'true_to_size',
+    verified_purchase BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ------------------------------------------------------------------------------
 -- INDEXES FOR OPTIMAL QUERY PERFORMANCE
 -- ------------------------------------------------------------------------------
 CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
@@ -125,9 +144,11 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(LOWER(email));
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_user_addresses_user_id ON user_addresses(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(LOWER(email));
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
 
 -- ------------------------------------------------------------------------------
 -- SEED DATA: CATEGORIES
@@ -254,64 +275,7 @@ BEGIN
         VALUES (p_id, 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=900&q=85', TRUE);
     END IF;
 
-    -- 6. Ceramic Table Lamp
-    IF NOT EXISTS (SELECT 1 FROM products WHERE slug = 'ceramic-table-lamp') THEN
-        INSERT INTO products (name, slug, description, price, stock, category_id, subcategory, variants, variant_label)
-        VALUES (
-            'Ceramic Table Lamp',
-            'ceramic-table-lamp',
-            'Handcrafted stoneware base with natural linen lampshade, radiating a warm ambient glow in any living space.',
-            1999.00,
-            25,
-            cat_home,
-            'Lighting',
-            '[{"label": "Sandstone", "stock": 15}, {"label": "Terracotta", "stock": 10}]'::jsonb,
-            'Finish'
-        ) RETURNING id INTO p_id;
-
-        INSERT INTO product_images (product_id, image_url, is_primary)
-        VALUES (p_id, 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=85', TRUE);
-    END IF;
-
-    -- 7. Botanical Hydrating Serum
-    IF NOT EXISTS (SELECT 1 FROM products WHERE slug = 'botanical-hydrating-serum') THEN
-        INSERT INTO products (name, slug, description, price, stock, category_id, subcategory, variants, variant_label)
-        VALUES (
-            'Botanical Hydrating Serum',
-            'botanical-hydrating-serum',
-            'Infused with multi-molecular hyaluronic acid and niacinamide for deeply hydrated, radiant skin.',
-            1499.00,
-            60,
-            cat_beauty,
-            'Skincare',
-            '[{"label": "30ml", "stock": 40}, {"label": "50ml", "stock": 20}]'::jsonb,
-            'Size'
-        ) RETURNING id INTO p_id;
-
-        INSERT INTO product_images (product_id, image_url, is_primary)
-        VALUES (p_id, 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=85', TRUE);
-    END IF;
-
-    -- 8. Organic Cotton Kids Set
-    IF NOT EXISTS (SELECT 1 FROM products WHERE slug = 'organic-cotton-kids-set') THEN
-        INSERT INTO products (name, slug, description, price, stock, category_id, subcategory, variants, variant_label)
-        VALUES (
-            'Organic Cotton Kids Set',
-            'organic-cotton-kids-set',
-            'Ultra-soft two-piece leisure set made from GOTS-certified organic cotton for sensitive skin and all-day play.',
-            1299.00,
-            35,
-            cat_kids,
-            'Clothing Sets',
-            '[{"label": "2-3Y", "stock": 10}, {"label": "4-5Y", "stock": 15}, {"label": "6-7Y", "stock": 10}]'::jsonb,
-            'Age'
-        ) RETURNING id INTO p_id;
-
-        INSERT INTO product_images (product_id, image_url, is_primary)
-        VALUES (p_id, 'https://images.unsplash.com/photo-1715285091754-c7241fe113fc?auto=format&fit=crop&w=900&q=85', TRUE);
-    END IF;
-
-    -- 9. Slim-Fit Selvedge Jeans
+    -- 6. Slim-Fit Selvedge Jeans
     IF NOT EXISTS (SELECT 1 FROM products WHERE slug = 'slim-fit-selvedge-jeans') THEN
         INSERT INTO products (name, slug, description, price, stock, category_id, subcategory, variants, variant_label)
         VALUES (
